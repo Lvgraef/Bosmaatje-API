@@ -1,15 +1,13 @@
-﻿using System;
-
-namespace Dto
+﻿namespace Bosmaatje_API.Dto
 {
-    public class ConfigurationReadDto(Guid configurationId, string childName, DateTime childBirthDate, string primaryDoctorName, string characterId, string treatmentPlanName)
+    public class ConfigurationReadDto
     {
-        public required Guid ConfigurationId { get; set; } = configurationId;
-        public required string ChildName { get; set; } = childName;
-        public required DateTime ChildBirthDate { get; set; } = childBirthDate;
-        public required string PrimaryDoctorName { get; set; } = primaryDoctorName;
-        public required string CharacterId { get; set; } = characterId;
-        public required string TreatmentPlanName { get; set; } = treatmentPlanName;
+        public required Guid configurationId { get; set; }
+        public required string childName { get; set; }
+        public required DateTime ChildBirthDate { get; set; }
+        public required string PrimaryDoctorName { get; set; }
+        public required string CharacterId { get; set; }
+        public required string TreatmentPlanName { get; set; }
     }
 }
 

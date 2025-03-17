@@ -1,97 +1,63 @@
-﻿using Dapper;
+﻿using Bosmaatje_API.Dto;
+using Bosmaatje_API.IRepository;
+using Dapper;
 using Microsoft.Data.SqlClient;
-using Dto;
 
-namespace Repositories
+namespace Bosmaatje_API.Repository
 {
-    public class ConfigurationRepository
+    public class ConfigurationRepository(string sqlConnectionString) : IConfigurationRepository
     {
-        private readonly string _sqlConnectionString;
-
-        public ConfigurationRepository(string sqlConnectionString)
+        public async Task<bool> Create(ConfigurationCreateDto configurationCreateDto, string email)
         {
-            _sqlConnectionString = sqlConnectionString;
-        }
-
-        public async Task<bool> Create(ConfigurationCreateDto configurationCreateDto, string Email)
-        {
-            bool Succesfull = false;
+            var succesfull = false;
             try
             {
-                using (var SqlConnection = new SqlConnection(_sqlConnectionString))
-                {
-                    await SqlConnection.ExecuteAsync($"Insert Into [Configuration] (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) Values ('@ConfigurationCreateDto.childName', @ConfigurationCreateDto.childBirthDay, '@configurationCreateDto.primaryDoctorName', @configurationCreateDto.characterId, '@Email', '@configurationCreate.treatmentCreateDto')");
-                }
+                await using var sqlConnection = new SqlConnection(sqlConnectionString);
+                await sqlConnection.ExecuteAsync($"Insert Into [Configuration] (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) Values ('@ConfigurationCreateDto.childName', @ConfigurationCreateDto.childBirthDay, '@configurationCreateDto.primaryDoctorName', @configurationCreateDto.characterId, '@Email', '@configurationCreate.treatmentCreateDto')");
             }
-
             catch(SqlException ex)
             {
-                return Succesfull;
+                return succesfull;
             }
-
-            catch(Exception ex)
-            {
-                return Succesfull;
-            }
-            Succesfull = true;
-            return Succesfull;
+            succesfull = true;
+            return succesfull;
         }
-
-        public async Task<ConfigurationReadDto> Read(string Email)
+        public async Task<ConfigurationReadDto?> Read(string email)
         {
-            using(var SqlConnection = new SqlConnection(_sqlConnectionString))
-            {
-                var Result = await SqlConnection.QuerySingleOrDefaultAsync($" Select * From [Configuration] Where Email = '@Email'");
-                return Result;
-            }
+            await using var sqlConnection = new SqlConnection(sqlConnectionString);
+            var result = await sqlConnection.QuerySingleOrDefaultAsync($" Select * From [Configuration] Where Email = '@Email'");
+            return result;
         }
-
-        public async Task<bool> Update(ConfigurationUpdateDto configurationUpdateDto, string Email)
+        public async Task<bool> Update(ConfigurationUpdateDto configurationUpdateDto, string email)
         {
-            bool Succesfull = false;
+            var successful = false;
             try
             {
-                using (var SqlConnection = new SqlConnection(_sqlConnectionString))
-                {
-                    await SqlConnection.ExecuteAsync($"Update [Configuration] Set (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) Where Email = '@Email' Values ('@ConfigurationCreateDto.childName', @ConfigurationCreateDto.childBirthDay, '@configurationCreateDto.primaryDoctorName', @configurationCreateDto.characterId, '@Email', '@configurationCreate.treatmentCreateDto')");
-                }
+                await using var sqlConnection = new SqlConnection(sqlConnectionString);
+                await sqlConnection.ExecuteAsync("Update [Configuration] Set (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) Where Email = '@Email' Values ('@ConfigurationCreateDto.childName', @ConfigurationCreateDto.childBirthDay, '@configurationCreateDto.primaryDoctorName', @configurationCreateDto.characterId, '@Email', '@configurationCreate.treatmentCreateDto')");
             }
-
             catch (SqlException ex)
             {
-                return Succesfull;
+                return successful;
             }
-
-            catch (Exception ex)
-            {
-                return Succesfull;
-            }
-            Succesfull = true;
-            return Succesfull;
+            successful = true;
+            return successful;
         }
 
-        public async Task<bool> Delete(`string Email)
+        public async Task<bool> Delete(string email)
         {
-            bool Succesfull = false;
+            var successfull = false;
             try
             {
-                using (var SqlConnection = new SqlConnection(_sqlConnectionString))
-                {
-                    await SqlConnection.ExecuteAsync($"DELETE FROM [Configuration] WHERE Email = @Email");
-                }
+                await using var sqlConnection = new SqlConnection(sqlConnectionString);
+                await sqlConnection.ExecuteAsync($"DELETE FROM [Configuration] WHERE Email = @Email");
             }
-
             catch (SqlException ex)
             {
-                return Succesfull;
+                return successfull;
             }
-
-            catch (Exception ex)
-            {
-                return Succesfull;
-            }
-            Succesfull = true;
-            return Succesfull;
+            successfull = true;
+            return successfull;
         }
     }
 }

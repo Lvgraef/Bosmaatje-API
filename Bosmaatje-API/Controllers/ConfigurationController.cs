@@ -1,29 +1,22 @@
-﻿using System;
-using Models;
-using Repositories;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using Bosmaatje_API.Dto;
+using Bosmaatje_API.IRepository;
+using Bosmaatje_API.Repository;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Controllers
+namespace Bosmaatje_API.Controllers
 {
     [ApiController]
     [Route("Configurations")]
-    public class ConfigurationController : ControllerBase
+    public class ConfigurationController(IConfigurationRepository configurationRepository) : ControllerBase
     {
-        private readonly ConfigurationRepository _configurationRepository;
-
-        public ConfigurationController(ConfigurationRepository configurationRepository)
-        {
-            _configurationRepository = configurationRepository;
-        }
-
         [HttpPost]
         public async Task<ActionResult> Create(ConfigurationCreateDto configurationCreateDto)
         {
-            var Email = User?.Identity?.name!;
-            var Succesfull = await _configurationRepository.Create(configurationCreateDto, Email);
-            if(!Succesfull)
+            var email = User?.Identity?.Name;
+            var successful = await configurationRepository.Create(configurationCreateDto, email);
+            if(!successful)
             {
-                return ServerError("Configuration creation failed.");
+                return Problem("Configuration creation failed.");
             }
             return CreatedAtRoute("Read", null, configurationCreateDto);
         }
@@ -31,23 +24,23 @@ namespace Controllers
         [HttpGet]
         public async Task<ActionResult<ConfigurationReadDto>> Read()
         {
-            var Email = User?.Identity?.name!;
-            var Result = await _configurationRepository.Read(Email);
-            if(Result == null)
+            var email = User?.Identity?.Name!;
+            var result = await configurationRepository.Read(email);
+            if(result == null)
             {
                 return NotFound();
             }
-            return Ok(Result);
+            return Ok(result);
         }
 
         [HttpPut]
         public async Task<ActionResult> Update(ConfigurationUpdateDto configurationUpdateDto)
         {
-            var Email = User?.Identity?.name!;
-            var Succesfull = await _configurationRepository.Update(configurationUpdateDto, Email);
-            if(!Succesfull)
+            var email = User?.Identity?.Name!;
+            var successful = await configurationRepository.Update(configurationUpdateDto, email);
+            if(!successful)
             {
-                return ServerError("Updating configuration failed");
+                return Problem("Updating configuration failed");
             }
             return NoContent();
         }
@@ -55,11 +48,11 @@ namespace Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete()
         {
-            var Email = User?.Identity?.name!;
-            var Succesfull = await _configurationRepository.Delete(Email);
-            if(!Succesfull)
+            var email = User?.Identity?.Name!;
+            var successful = await configurationRepository.Delete(email);
+            if(!successful)
             {
-                return ServerError("Deleting configuration failed");
+                return Problem("Deleting configuration failed");
             }
             return NoContent();
         }

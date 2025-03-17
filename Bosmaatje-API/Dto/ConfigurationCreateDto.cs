@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace Dto
+﻿namespace Bosmaatje_API.Dto
 {
-    public class Configuration(string childName, DateTime childBirthDate, string primaryDoctorName, string characterId, string treatmentPlanName)
+    public class ConfigurationCreateDto
     { 
-        public required string ChildName { get; set; } = childName; 
-        public required DateTime ChildBirthDate { get; set; } = childBirthDate;
-        public required string PrimaryDoctorName { get; set; } = primaryDoctorName; 
-        public required string CharacterId { get; set; } = characterId;
-        public required string TreatmentPlanName { get; set; } = treatmentPlanName;
+        public required string ChildName { get; set; }
+        public required DateTime ChildBirthDate { get; set; }
+        public required string PrimaryDoctorName { get; set; }  
+        public required string CharacterId { get; set; } 
+        public required string TreatmentPlanName { get; set; } 
     }
 }

@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Dto
+﻿namespace Bosmaatje_API.Dto
 {
-    public class ConfgurationUpdateDto
+    public class ConfigurationUpdateDto
     {
-        public required string? PrimaryDoctorName { get; set; } = primaryDoctorName;
-        public required string? CharacterId { get; set; } = characterId;
+        public required string? PrimaryDoctorName { get; set; }
+        public required string? CharacterId { get; set; }
     }
 }
 
