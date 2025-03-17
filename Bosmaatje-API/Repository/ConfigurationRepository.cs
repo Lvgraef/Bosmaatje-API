@@ -13,7 +13,7 @@ namespace Bosmaatje_API.Repository
             try
             {
                 await using var sqlConnection = new SqlConnection(sqlConnectionString);
-                await sqlConnection.ExecuteAsync($"Insert Into [Configuration] (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) Values ('@ConfigurationCreateDto.childName', @ConfigurationCreateDto.childBirthDay, '@configurationCreateDto.primaryDoctorName', @configurationCreateDto.characterId, '@Email', '@configurationCreate.treatmentCreateDto')");
+                await sqlConnection.ExecuteAsync($"Insert Into [Configuration] (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) Values ('@ConfigurationCreateDto.childName', @ConfigurationCreateDto.childBirthDay, '@configurationCreateDto.primaryDoctorName', @configurationCreateDto.characterId, '@email', '@configurationCreate.treatmentCreateDto')");
             }
             catch(SqlException ex)
             {
@@ -34,7 +34,7 @@ namespace Bosmaatje_API.Repository
             try
             {
                 await using var sqlConnection = new SqlConnection(sqlConnectionString);
-                await sqlConnection.ExecuteAsync("Update [Configuration] Set (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) Where Email = '@Email' Values ('@ConfigurationCreateDto.childName', @ConfigurationCreateDto.childBirthDay, '@configurationCreateDto.primaryDoctorName', @configurationCreateDto.characterId, '@Email', '@configurationCreate.treatmentCreateDto')");
+                await sqlConnection.ExecuteAsync("Update [Configuration] Set (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) Values ('@ConfigurationUpdateDto.childName', @ConfigurationUpdateDto.childBirthDay, '@configurationUpdateDto.primaryDoctorName', @configurationUpdateDto.characterId, '@email', '@configurationUpdateDto.treatmentPlanName') Where Email = '@email'");
             }
             catch (SqlException ex)
             {

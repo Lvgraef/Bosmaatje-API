@@ -2,8 +2,8 @@
 {
     public class ConfigurationUpdateDto
     {
-        public required string? PrimaryDoctorName { get; set; }
-        public required string? CharacterId { get; set; }
+        public required string? primaryDoctorName { get; set; }
+        public required string? characterId { get; set; }
     }
 }
 

@@ -4,10 +4,10 @@
     {
         public required Guid configurationId { get; set; }
         public required string childName { get; set; }
-        public required DateTime ChildBirthDate { get; set; }
-        public required string PrimaryDoctorName { get; set; }
-        public required string CharacterId { get; set; }
-        public required string TreatmentPlanName { get; set; }
+        public required DateTime childBirthDate { get; set; }
+        public required string primaryDoctorName { get; set; }
+        public required string characterId { get; set; }
+        public required string treatmentPlanName { get; set; }
     }
 }
 
