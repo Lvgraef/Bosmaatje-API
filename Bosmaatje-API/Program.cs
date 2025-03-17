@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ var connectionString = builder.Configuration.GetConnectionString("DatabaseConnec
 var sqlConnectionStringFound = !string.IsNullOrWhiteSpace(connectionString);
 
 // Sample
-// builder.Services.AddSingleton<ICrudRepository<Guid, *other things you may need*>, *item*Repository>(_ => new *item*Repository(connectionString ?? throw new ArgumentException("No connection string found in secrets.json")));
+// builder.Services.AddSingleton<I*item*Repository<Guid, *other things you may need*>, *item*Repository>(_ => new *item*Repository(connectionString ?? throw new ArgumentException("No connection string found in secrets.json")));
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -17,10 +18,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthorization();
+var requireUserPolicy = new AuthorizationPolicyBuilder()
+.RequireAuthenticatedUser()
+.Build();
+
+builder.Services.AddAuthorizationBuilder()
+.SetDefaultPolicy(requireUserPolicy)
+.SetFallbackPolicy(requireUserPolicy);
+
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     {
         options.User.RequireUniqueEmail = true;
         options.Password.RequiredLength = 10;
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireNonAlphanumeric = true;
     })
     .AddRoles<IdentityRole>()
     .AddDapperStores(options =>
@@ -43,6 +56,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapGroup("/account").MapIdentityApi<IdentityUser>();
 app.MapControllers();//.RequireAuthorization();
