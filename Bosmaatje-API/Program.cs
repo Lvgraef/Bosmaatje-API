@@ -17,14 +17,15 @@ var sqlConnectionStringFound = !string.IsNullOrWhiteSpace(connectionString);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthentication();
+
 var requireUserPolicy = new AuthorizationPolicyBuilder()
-.RequireAuthenticatedUser()
-.Build();
+    .RequireAuthenticatedUser()
+    .Build();
 
 builder.Services.AddAuthorizationBuilder()
-.SetDefaultPolicy(requireUserPolicy)
-.SetFallbackPolicy(requireUserPolicy);
+    .SetDefaultPolicy(requireUserPolicy)
+    .SetFallbackPolicy(requireUserPolicy);
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     {
@@ -41,10 +42,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
         options.ConnectionString = builder.Configuration.GetConnectionString("DapperIdentity");
     });
 
-builder.Services.AddMvc().AddJsonOptions(options =>
-    {   
-        options.JsonSerializerOptions.MaxDepth = 64;
-    });
+builder.Services.AddMvc().AddJsonOptions(options => { options.JsonSerializerOptions.MaxDepth = 64; });
 
 var app = builder.Build();
 
@@ -55,20 +53,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
+
+app.MapGroup("/account").MapIdentityApi<IdentityUser>().AllowAnonymous();
+
 app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapGroup("/account").MapIdentityApi<IdentityUser>();
-app.MapControllers();//.RequireAuthorization();
+app.MapControllers(); //.RequireAuthorization();
 
-app.MapGet("/", () => $"The API is up and running. Connection string found: {(sqlConnectionStringFound ? "Yes" : "No")}");
+app.MapGet("/",
+    () => $"The API is up and running. Connection string found: {(sqlConnectionStringFound ? "Yes" : "No")}");
 app.MapPost("/account/logout",
     async (SignInManager<IdentityUser> signInManager, [FromBody] object? empty) =>
     {
         if (empty == null) return Results.Unauthorized();
         await signInManager.SignOutAsync();
         return Results.Ok();
-
     });
 
 app.Run();
