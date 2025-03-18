@@ -1,7 +1,7 @@
 ﻿using Bosmaatje_API.Dto;
 using Bosmaatje_API.IRepository;
-using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace Bosmaatje_API.Controllers
 {
@@ -12,11 +12,21 @@ namespace Bosmaatje_API.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ConfigurationCreateDto configurationCreateDto)
         {
-            var email = User?.Identity?.Name;
-            var successful = await configurationRepository.Create(configurationCreateDto, email);
-            if(!successful)
+            try
             {
-                return Problem("Configuration creation failed.");
+                var email = User?.Identity?.Name;
+                await configurationRepository.Create(configurationCreateDto, email);
+            }
+            catch(SqlException exception)
+            {
+                if (exception.Number == 547)
+                {
+                    return Conflict();
+                }
+                #if DEBUG
+                    throw;
+                #endif 
+                return Problem();
             }
             return CreatedAtRoute("Read", null, configurationCreateDto);
         }
@@ -36,11 +46,21 @@ namespace Bosmaatje_API.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(ConfigurationUpdateDto configurationUpdateDto)
         {
-            var email = User?.Identity?.Name!;
-            var successful = await configurationRepository.Update(configurationUpdateDto, email);
-            if(!successful)
+            try
             {
-                return Problem("Updating configuration failed");
+                var email = User?.Identity?.Name!;
+                await configurationRepository.Update(configurationUpdateDto, email);
+            }
+            catch (SqlException exception)
+            {
+                if (exception.Number == 547)
+                {
+                    return Conflict();
+                }
+                #if DEBUG
+                    throw;
+                #endif 
+                return Problem();
             }
             return NoContent();
         }
@@ -48,11 +68,22 @@ namespace Bosmaatje_API.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete()
         {
-            var email = User?.Identity?.Name!;
-            var successful = await configurationRepository.Delete(email);
-            if(!successful)
+            try
             {
-                return Problem("Deleting configuration failed");
+                var email = User?.Identity?.Name!;
+                await configurationRepository.Delete(email);
+            }
+
+            catch (SqlException exception)
+            {
+                if (exception.Number == 547)
+                {
+                    return Conflict();
+                }
+                #if DEBUG
+                    throw;
+                #endif 
+                return Problem(); 
             }
             return NoContent();
         }
