@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>Bosmaatje_API</RootNamespace>
+        <UserSecretsId>473f81fb-7426-463b-ab3c-304976e067b2</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
