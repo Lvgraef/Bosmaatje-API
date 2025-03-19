@@ -4,6 +4,6 @@ namespace Bosmaatje_API.IRepository;
 
 public interface ITreatmentRepository
 {
-    Task<TreatmentReadDto?> Read(string email);
-    Task Update(TreatmentUpdateDto treatmentUpdateDto, Guid treatmentId);
+    Task<List<TreatmentReadDto?>> Read(string email, string treatmentPlanName);
+    Task Update(TreatmentUpdateDto treatmentUpdateDto, string treatmentPlanName);
 }

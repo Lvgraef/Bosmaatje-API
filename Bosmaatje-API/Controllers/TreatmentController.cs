@@ -10,10 +10,10 @@ namespace Bosmaatje_API.Controllers
     public class TreatmentController(ITreatmentRepository treatmentRepository) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<ConfigurationReadDto>> Read()
+        public async Task<ActionResult<List<TreatmentReadDto>>> Read([FromQuery] string treatmentPlanName)
         {
             var email = User?.Identity?.Name!;
-            var result = await treatmentRepository.Read(email);
+            var result = await treatmentRepository.Read(email, treatmentPlanName);
             if(result == null)
             { 
                 return NotFound();
@@ -22,12 +22,12 @@ namespace Bosmaatje_API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromQuery] Guid treatmentId, TreatmentUpdateDto treatmentUpdateDto)
+        public async Task<ActionResult> Update([FromQuery] string treatmentPlanName, TreatmentUpdateDto treatmentUpdateDto)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await treatmentRepository.Update(treatmentUpdateDto, treatmentId);
+                await treatmentRepository.Update(treatmentUpdateDto, treatmentPlanName);
             }
             catch (SqlException exception)
             {

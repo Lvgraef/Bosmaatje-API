@@ -14,21 +14,22 @@ namespace Bosmaatje_API.Controllers
         {
             try
             {
-                var email = User?.Identity?.Name;
-                await configurationRepository.Create(configurationCreateDto, email);
-            }
-            catch(SqlException exception)
-            {
-                if (exception.Number == 547)
+                var email = User?.Identity?.Name!;
+                var conflict = await configurationRepository.ConflictCheck(email);
+                if (conflict)
                 {
                     return Conflict();
                 }
-                #if DEBUG
-                    throw;
-                #endif 
+                await configurationRepository.Create(configurationCreateDto, email);
+            }
+            catch (SqlException exception)
+            {
+            #if DEBUG
+                throw;
+            #endif
                 return Problem();
             }
-            return CreatedAtRoute("Read", null, configurationCreateDto);
+            return CreatedAtRoute("Create", null, configurationCreateDto);
         }
 
         [HttpGet]
@@ -50,19 +51,15 @@ namespace Bosmaatje_API.Controllers
             {
                 var email = User?.Identity?.Name!;
                 await configurationRepository.Update(configurationUpdateDto, email);
+                return NoContent();
             }
-            catch (SqlException exception)
+            catch (SqlException)
             {
-                if (exception.Number == 547)
-                {
-                    return Conflict();
-                }
-                #if DEBUG
-                    throw;
-                #endif 
+            #if DEBUG
+                throw;
+            #endif
                 return Problem();
             }
-            return NoContent();
         }
 
         [HttpDelete]
@@ -72,20 +69,16 @@ namespace Bosmaatje_API.Controllers
             {
                 var email = User?.Identity?.Name!;
                 await configurationRepository.Delete(email);
+                return NoContent();
             }
 
-            catch (SqlException exception)
+            catch (SqlException)
             {
-                if (exception.Number == 547)
-                {
-                    return Conflict();
-                }
                 #if DEBUG
                     throw;
                 #endif 
                 return Problem(); 
             }
-            return NoContent();
         }
     }
 }

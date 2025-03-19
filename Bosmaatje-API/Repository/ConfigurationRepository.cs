@@ -18,10 +18,28 @@ namespace Bosmaatje_API.Repository
                     configurationCreateDto.treatmentPlanName 
                 });
         }
+        public async Task<bool> ConflictCheck(string email)
+        {
+            await using var sqlConnection = new SqlConnection(sqlConnectionString);
+            var result = await sqlConnection.QueryAsync<string>("SELECT Email FROM [Configuration]");
+            
+            foreach (var item in result)
+            {
+                if (item == email)
+                {
+                    return true;
+                }
+            }
+           return false;
+        }
         public async Task<ConfigurationReadDto?> Read(string email)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            var result = await sqlConnection.QuerySingleOrDefaultAsync(" SELECT * FROM [Configuration] WHERE Email = @email");
+            var result = await sqlConnection.QuerySingleOrDefaultAsync(" SELECT * FROM [Configuration] WHERE Email = @email",
+                new
+                {
+                    email
+                });
             return result;
         }
         public async Task Update(ConfigurationUpdateDto configurationUpdateDto, string email)
@@ -30,13 +48,17 @@ namespace Bosmaatje_API.Repository
             await sqlConnection.ExecuteAsync("UPDATE [Configuration] SET PrimaryDoctorName = @primaryDoctorName, CharacterId = @characterId WHERE Email = @email", 
                 new
                 {
-                    configurationUpdateDto.primaryDoctorName, configurationUpdateDto.characterId
+                    email, configurationUpdateDto.primaryDoctorName, configurationUpdateDto.characterId
                 });
         }
         public async Task Delete(string email)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            await sqlConnection.ExecuteAsync("DELETE FROM [Configuration] WHERE Email = @email");
+            await sqlConnection.ExecuteAsync("DELETE FROM [Configuration] WHERE Email = @email",
+                new
+                {
+                    email
+                });
         }
     }
 }
