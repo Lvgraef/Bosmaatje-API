@@ -29,7 +29,7 @@ namespace Bosmaatje_API.Controllers
             #endif
                 return Problem();
             }
-            return CreatedAtRoute("Create", null, configurationCreateDto);
+            return CreatedAtRoute("Read", null, configurationCreateDto);
         }
 
         [HttpGet]

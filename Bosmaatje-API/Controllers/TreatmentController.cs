@@ -29,13 +29,8 @@ namespace Bosmaatje_API.Controllers
                 var email = User?.Identity?.Name!;
                 await treatmentRepository.Update(treatmentUpdateDto, treatmentPlanName);
             }
-            catch (SqlException exception)
+            catch (SqlException)
             {
-                
-                if (exception.Number == 547)
-                {
-                    return Conflict();
-                }
                 #if DEBUG
                     throw;
                 #endif 

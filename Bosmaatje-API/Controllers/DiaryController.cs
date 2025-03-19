@@ -26,7 +26,7 @@ public class DiaryController
                 #endif
                 return Problem();
             }
-            return CreatedAtRoute("Create", null, diaryCreateDto);
+            return CreatedAtRoute("Read", null, diaryCreateDto);
         }
         
         [HttpGet]

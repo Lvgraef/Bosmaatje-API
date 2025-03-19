@@ -10,7 +10,7 @@ namespace Bosmaatje_API.Repository
         public async Task Create(ConfigurationCreateDto configurationCreateDto, string email)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            await sqlConnection.ExecuteAsync($"INSERT INTO [Configuration] (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) VALUES (@childName, @childBirthDay, @primaryDoctorName, @characterId, @email, @treatmentCreateDto", 
+            await sqlConnection.ExecuteAsync($"INSERT INTO [Configuration] (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) VALUES (@childName, @childBirthDay, @primaryDoctorName, @characterId, @email, @treatmentCreateDto)", 
                 new
                 {
                     email, configurationCreateDto.childName, configurationCreateDto.childBirthDate,

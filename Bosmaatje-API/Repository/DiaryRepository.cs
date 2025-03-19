@@ -9,7 +9,7 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
     public async Task Create(DiaryCreateDto diaryCreateDto, string email)
     {
         await using var sqlConnection = new SqlConnection(sqlConnectionString);
-        await sqlConnection.ExecuteAsync($"INSERT INTO [Diary] (Date, Content, Email) VALUES (@date, @content, @email", 
+        await sqlConnection.ExecuteAsync($"INSERT INTO [Diary] (Date, Content, Email) VALUES (@date, @content, @email)", 
             new
             {
                 email, diaryCreateDto.date, diaryCreateDto.content
@@ -19,7 +19,7 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
     public async Task<DiaryReadDto?> Read(string email)
     {
         await using var sqlConnection = new SqlConnection(sqlConnectionString);
-        var result = await sqlConnection.QuerySingleOrDefaultAsync("SELECT * fROM [Diary] WHERE Email = @email",
+        var result = await sqlConnection.QuerySingleOrDefaultAsync("SELECT * FROM [Diary] WHERE Email = @email",
             new 
             {
                 email
