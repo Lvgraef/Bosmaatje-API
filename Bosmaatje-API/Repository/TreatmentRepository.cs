@@ -1,5 +1,4 @@
 using Bosmaatje_API.Dto;
-using Bosmaatje_API.IRepository;
 using Dapper;
 using Microsoft.Data.SqlClient;
 
@@ -10,7 +9,7 @@ namespace Bosmaatje_API.Repository
         public async Task<List<TreatmentReadDto?>> Read(string email, string treatmentPlanName)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            var result = await sqlConnection.QueryAsync<TreatmentReadDto>(" SELECT t.TreatmentId, t.[Name], t.ImageUri, t.VideoUri t.[Date], t.[Order], t.DoctorName, t.TreatmentPlanName, t.Description, t.IsCompleted FROM [Configuration] cLEFT JOIN Treatment t ON c.TreatmentPlanName = t.TreatmentPlanName WHERE c.TreatmentPlanName = @treatmentPlanName AND c.Email = @email",
+            var result = await sqlConnection.QueryAsync<TreatmentReadDto>("SELECT t.TreatmentId, t.[Name], t.ImagePath, t.VideoPath, t.[Date], t.[Order], t.DoctorName, t.TreatmentPlanName, t.IsCompleted FROM [Configuration] c LEFT JOIN Treatment t ON c.TreatmentPlanName = t.TreatmentPlanName WHERE c.TreatmentPlanName = @treatmentPlanName AND c.Email = @email",
                 new
                 {
                     email, treatmentPlanName
@@ -22,29 +21,25 @@ namespace Bosmaatje_API.Repository
             return result.ToList();
         }
 
-        public async Task<List<string>> GetDescription(Guid treatmentId)
+        private async Task<List<string>> GetDescription(Guid treatmentId)
         {
-            List<string> description = new List<string>();
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            var result = await sqlConnection.QueryAsync<string>("SELECT Page FROM [Treatments] WHERE TreatmentId = @treatmentId ORDER BY Order",
+            var result = await sqlConnection.QueryAsync<string>("SELECT Content FROM [Description] WHERE TreatmentId = @treatmentId ORDER BY [Order]",
                new
                {
                     treatmentId
                 });
-            foreach (var item in result)
-            {
-                description.Add(item);
-            }
-            return description;
+            return result.ToList();
         }
 
-        public async Task Update(TreatmentUpdateDto treatmentUpdateDto, string treatmentPlanName)
+        public async Task Update(TreatmentUpdateDto treatmentUpdateDto, string treatmentId, string email, string treatmentPlanName)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            await sqlConnection.ExecuteAsync("UPDATE [Treatment] SET Date = @date, DoctorName = @doctorName WHERE TreatmentPlanName = @treatmentPlanName", 
+            var result = (await Read(email, treatmentPlanName))[0];
+            await sqlConnection.ExecuteAsync("UPDATE [Treatment] SET Date = @date, DoctorName = @doctorName WHERE TreatmentId = @treatmentId", 
                 new
                 {
-                    treatmentPlanName, treatmentUpdateDto.date, treatmentUpdateDto.doctorName
+                    treatmentId, date = treatmentUpdateDto.date ?? result!.date, doctorName = treatmentUpdateDto.doctorName ?? result!.doctorName
                 });
         }
     }

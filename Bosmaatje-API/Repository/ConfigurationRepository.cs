@@ -1,5 +1,4 @@
 ﻿using Bosmaatje_API.Dto;
-using Bosmaatje_API.IRepository;
 using Dapper;
 using Microsoft.Data.SqlClient;
 
@@ -10,7 +9,7 @@ namespace Bosmaatje_API.Repository
         public async Task Create(ConfigurationCreateDto configurationCreateDto, string email)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            await sqlConnection.ExecuteAsync($"INSERT INTO [Configuration] (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) VALUES (@childName, @childBirthDay, @primaryDoctorName, @characterId, @email, @treatmentCreateDto)", 
+            await sqlConnection.ExecuteAsync($"INSERT INTO [Configuration] (ChildName, ChildBirthDate, PrimaryDoctorName, CharacterId, Email, TreatmentPlanName) VALUES (@childName, @childBirthDate, @primaryDoctorName, @characterId, @email, @treatmentPlanName)", 
                 new
                 {
                     email, configurationCreateDto.childName, configurationCreateDto.childBirthDate,
@@ -35,7 +34,7 @@ namespace Bosmaatje_API.Repository
         public async Task<ConfigurationReadDto?> Read(string email)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            var result = await sqlConnection.QuerySingleOrDefaultAsync(" SELECT * FROM [Configuration] WHERE Email = @email",
+            var result = await sqlConnection.QuerySingleOrDefaultAsync<ConfigurationReadDto>(" SELECT * FROM [Configuration] WHERE Email = @email",
                 new
                 {
                     email

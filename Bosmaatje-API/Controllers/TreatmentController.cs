@@ -1,5 +1,5 @@
 using Bosmaatje_API.Dto;
-using Bosmaatje_API.IRepository;
+using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
@@ -22,12 +22,12 @@ namespace Bosmaatje_API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromQuery] string treatmentPlanName, TreatmentUpdateDto treatmentUpdateDto)
+        public async Task<ActionResult> Update([FromQuery] string treatmentId, TreatmentUpdateDto treatmentUpdateDto, [FromQuery] string treatmentPlanName)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await treatmentRepository.Update(treatmentUpdateDto, treatmentPlanName);
+                await treatmentRepository.Update(treatmentUpdateDto, treatmentId, email, treatmentPlanName);
             }
             catch (SqlException)
             {
