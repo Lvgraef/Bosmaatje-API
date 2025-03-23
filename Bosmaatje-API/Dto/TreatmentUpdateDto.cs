@@ -4,6 +4,7 @@ namespace Bosmaatje_API.Dto
     {
         public required DateTime? date { get; set; }
         public required string? doctorName { get; set; }
+        public required string? stickerId { get; set; }
     }
 }
 

@@ -22,12 +22,12 @@ namespace Bosmaatje_API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromQuery] string treatmentId, TreatmentUpdateDto treatmentUpdateDto, [FromQuery] string treatmentPlanName)
+        public async Task<ActionResult> Update([FromQuery] Guid treatmentId, TreatmentUpdateDto treatmentUpdateDto)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await treatmentRepository.Update(treatmentUpdateDto, treatmentId, email, treatmentPlanName);
+                await treatmentRepository.Update(treatmentUpdateDto, treatmentId, email);
             }
             catch (SqlException)
             {
