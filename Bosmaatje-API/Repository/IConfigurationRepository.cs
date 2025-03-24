@@ -1,6 +1,6 @@
 using Bosmaatje_API.Dto;
 
-namespace Bosmaatje_API.IRepository;
+namespace Bosmaatje_API.Repository;
 
 public interface IConfigurationRepository
 {

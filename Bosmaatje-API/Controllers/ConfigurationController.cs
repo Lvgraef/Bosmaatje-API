@@ -1,5 +1,5 @@
 ﻿using Bosmaatje_API.Dto;
-using Bosmaatje_API.IRepository;
+using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
@@ -29,7 +29,8 @@ namespace Bosmaatje_API.Controllers
             #endif
                 return Problem();
             }
-            return CreatedAtRoute("Read", null, configurationCreateDto);
+
+            return Created();
         }
 
         [HttpGet]

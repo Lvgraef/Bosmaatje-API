@@ -1,3 +1,4 @@
+using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ builder.Services.AddControllers();
 
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 var sqlConnectionStringFound = !string.IsNullOrWhiteSpace(connectionString);
+
+if (!sqlConnectionStringFound) throw new ArgumentException("No connection string found.");
 
 // Sample
 // builder.Services.AddSingleton<I*item*Repository<Guid, *other things you may need*>, *item*Repository>(_ => new *item*Repository(connectionString ?? throw new ArgumentException("No connection string found in secrets.json")));
@@ -26,6 +29,10 @@ var requireUserPolicy = new AuthorizationPolicyBuilder()
 builder.Services.AddAuthorizationBuilder()
     .SetDefaultPolicy(requireUserPolicy)
     .SetFallbackPolicy(requireUserPolicy);
+
+builder.Services.AddSingleton<ITreatmentRepository, TreatmentRepository>(_ => new TreatmentRepository(connectionString!));
+builder.Services.AddSingleton<IConfigurationRepository, ConfigurationRepository>(_ => new ConfigurationRepository(connectionString!));
+builder.Services.AddSingleton<IDiaryRepository, DiaryRepository>(_ => new DiaryRepository(connectionString!));
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     {
