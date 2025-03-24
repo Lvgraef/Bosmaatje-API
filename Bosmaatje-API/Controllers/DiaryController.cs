@@ -3,13 +3,11 @@ using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
-namespace Bosmaatje_API.Controllers;
-
-public class DiaryController
+namespace Bosmaatje_API.Controllers
 {
     [ApiController]
     [Route("Diaries")]
-    public class ConfigurationController(IDiaryRepository diaryRepository) : ControllerBase
+    public class DiaryController(IDiaryRepository diaryRepository) : ControllerBase
     {
         [HttpPost]
         public async Task<ActionResult> Create(DiaryCreateDto diaryCreateDto)
@@ -30,10 +28,10 @@ public class DiaryController
         }
         
         [HttpGet]
-        public async Task<ActionResult<DiaryReadDto>> Read()
+        public async Task<ActionResult<List<DiaryReadDto>>> Read([FromQuery] DateTime? date)
         {
             var email = User?.Identity?.Name!;
-            var result = await diaryRepository.Read(email);
+            var result = await diaryRepository.Read(email, date);
             if(result == null)
             {
                 return NotFound();
