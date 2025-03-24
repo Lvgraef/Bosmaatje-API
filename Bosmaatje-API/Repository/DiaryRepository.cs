@@ -16,15 +16,25 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
             });
     }
 
-    public async Task<DiaryReadDto?> Read(string email)
+    public async Task<List<DiaryReadDto>> Read(string email, DateTime? date)
     {
         await using var sqlConnection = new SqlConnection(sqlConnectionString);
-        var result = await sqlConnection.QuerySingleOrDefaultAsync("SELECT * FROM [Diary] WHERE Email = @email",
+        if (date == null)
+        {
+            var resultList = await sqlConnection.QueryAsync<DiaryReadDto>("SELECT * FROM [Diary] WHERE Email = @email",
+                new 
+                {
+                    email
+                });
+            return resultList.ToList();
+        }
+        var result = await sqlConnection.QueryAsync<DiaryReadDto>("SELECT * FROM [Diary] WHERE Email = @email AND Date = @date",
             new 
             {
-                email
+                email,
+                date
             });
-        return result;
+        return result.ToList();
     }
 
     public async Task Update(DiaryUpdateDto diaryUpdateDto, string email)
