@@ -24,9 +24,10 @@ namespace Bosmaatje_API.Controllers
                 #endif
                 return Problem();
             }
-            return CreatedAtRoute("Read", null, diaryCreateDto);
+            return StatusCode(201, diaryCreateDto);
+
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<List<DiaryReadDto>>> Read([FromQuery] DateTime? date)
         {
@@ -38,25 +39,25 @@ namespace Bosmaatje_API.Controllers
             }
             return Ok(result);
         }
-        
+
         [HttpPut]
-        public async Task<ActionResult> Update(DiaryUpdateDto diaryUpdateDto)
+        public async Task<ActionResult> Update(DiaryUpdateDto diaryUpdateDto, [FromQuery] DateTime date)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await diaryRepository.Update(diaryUpdateDto, email);
+                await diaryRepository.Update(diaryUpdateDto, email, date);
                 return NoContent();
             }
             catch (SqlException)
             {
-                #if DEBUG
-                    throw;
-                #endif
+            #if DEBUG
+                throw;
+            #endif
                 return Problem();
             }
         }
-        
+
         [HttpDelete]
         public async Task<ActionResult> Delete()
         {
