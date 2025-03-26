@@ -68,7 +68,7 @@ namespace Bosmaatje_API.Repository
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
             await sqlConnection.ExecuteAsync(
-                "UPDATE [Configuration] SET PrimaryDoctorName = @primaryDoctorName, CharacterId = @characterId WHERE Email = @email",
+                "UPDATE [Configuration] SET PrimaryDoctorName = @primaryDoctorName, CharacterId = @characterId,  WHERE Email = @email",
                 new
                 {
                     email, configurationUpdateDto.primaryDoctorName, configurationUpdateDto.characterId

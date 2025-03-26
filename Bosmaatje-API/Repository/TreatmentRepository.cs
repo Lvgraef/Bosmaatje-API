@@ -6,11 +6,11 @@ namespace Bosmaatje_API.Repository
 {
     public class TreatmentRepository(string sqlConnectionString) : ITreatmentRepository
     {
-        public async Task<List<TreatmentReadDto?>> Read(string email, string treatmentPlanName)
+        public async Task<List<TreatmentReadDto?>> Read(string email, string? treatmentPlanName)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
             var result = await sqlConnection.QueryAsync<TreatmentReadDto>(
-                "SELECT t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM [Configuration] c LEFT JOIN Treatment t ON c.TreatmentPlanName = t.TreatmentPlanName LEFT JOIN TreatmentInfo i ON t.TreatmentId = i.TreatmentId WHERE c.TreatmentPlanName = @treatmentPlanName AND c.Email = @email AND i.Email = @Email ORDER BY t.[Order]",
+                "SELECT t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM [Configuration] c LEFT JOIN Treatment t ON c.TreatmentPlanName = t.TreatmentPlanName LEFT JOIN TreatmentInfo i ON t.TreatmentId = i.TreatmentId WHERE (c.TreatmentPlanName = 'Hospitalization' OR c.TreatmentPlanName = 'Both') AND c.Email = @email AND i.Email = @Email ORDER BY t.[Order]",
                 new
                 {
                     email, treatmentPlanName
