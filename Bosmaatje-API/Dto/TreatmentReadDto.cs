@@ -10,7 +10,6 @@ namespace Bosmaatje_API.Dto
         public required int order { get; set; }
         public required string doctorName { get; set; }
         public required List<string> description { get; set; }
-        public required bool isCompleted { get; set; }
         public required string? stickerId { get; set; }
     }
 }

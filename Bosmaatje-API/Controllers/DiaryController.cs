@@ -3,13 +3,11 @@ using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
-namespace Bosmaatje_API.Controllers;
-
-public class DiaryController
+namespace Bosmaatje_API.Controllers
 {
     [ApiController]
     [Route("Diaries")]
-    public class ConfigurationController(IDiaryRepository diaryRepository) : ControllerBase
+    public class DiaryController(IDiaryRepository diaryRepository) : ControllerBase
     {
         [HttpPost]
         public async Task<ActionResult> Create(DiaryCreateDto diaryCreateDto)
@@ -30,10 +28,10 @@ public class DiaryController
         }
         
         [HttpGet]
-        public async Task<ActionResult<DiaryReadDto>> Read()
+        public async Task<ActionResult<List<DiaryReadDto>>> Read([FromQuery] DateTime? date)
         {
             var email = User?.Identity?.Name!;
-            var result = await diaryRepository.Read(email);
+            var result = await diaryRepository.Read(email, date);
             if(result == null)
             {
                 return NotFound();
@@ -42,12 +40,12 @@ public class DiaryController
         }
         
         [HttpPut]
-        public async Task<ActionResult> Update(DiaryUpdateDto diaryUpdateDto)
+        public async Task<ActionResult> Update(DiaryUpdateDto diaryUpdateDto, [FromQuery] DateTime date)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await diaryRepository.Update(diaryUpdateDto, email);
+                await diaryRepository.Update(diaryUpdateDto, email, date);
                 return NoContent();
             }
             catch (SqlException)
@@ -60,12 +58,12 @@ public class DiaryController
         }
         
         [HttpDelete]
-        public async Task<ActionResult> Delete()
+        public async Task<ActionResult> Delete([FromQuery] DateTime date)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await diaryRepository.Delete(email);
+                await diaryRepository.Delete(email, date);
                 return NoContent();
             }
 
