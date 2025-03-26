@@ -37,23 +37,23 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
         return result.ToList();
     }
 
-    public async Task Update(DiaryUpdateDto diaryUpdateDto, string email)
+    public async Task Update(DiaryUpdateDto diaryUpdateDto, string email, DateTime date)
     {
         await using var sqlConnection = new SqlConnection(sqlConnectionString);
-        await sqlConnection.ExecuteAsync("UPDATE [Diary] SET Content = @content WHERE Email = @email",
+        await sqlConnection.ExecuteAsync("UPDATE [Diary] SET Content = @content WHERE Email = @email AND Date = @date",
             new
             {
-                email, diaryUpdateDto.content
+                email, diaryUpdateDto.content, date
             });
     }
 
-    public async Task Delete(string email)
+    public async Task Delete(string email, DateTime date)
     {
         await using var sqlConnection = new SqlConnection(sqlConnectionString);
-        await sqlConnection.ExecuteAsync("DELETE FROM [Diary] WHERE Email = @email", 
+        await sqlConnection.ExecuteAsync("DELETE FROM [Diary] WHERE Email = @email AND [Date] = @date", 
             new
             {
-              email
+              email, date
             });
     }
 }

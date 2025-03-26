@@ -40,12 +40,12 @@ namespace Bosmaatje_API.Controllers
         }
         
         [HttpPut]
-        public async Task<ActionResult> Update(DiaryUpdateDto diaryUpdateDto)
+        public async Task<ActionResult> Update(DiaryUpdateDto diaryUpdateDto, [FromQuery] DateTime date)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await diaryRepository.Update(diaryUpdateDto, email);
+                await diaryRepository.Update(diaryUpdateDto, email, date);
                 return NoContent();
             }
             catch (SqlException)
@@ -58,12 +58,12 @@ namespace Bosmaatje_API.Controllers
         }
         
         [HttpDelete]
-        public async Task<ActionResult> Delete()
+        public async Task<ActionResult> Delete([FromQuery] DateTime date)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await diaryRepository.Delete(email);
+                await diaryRepository.Delete(email, date);
                 return NoContent();
             }
 
