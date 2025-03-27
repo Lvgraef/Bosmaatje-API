@@ -18,22 +18,13 @@ namespace Bosmaatje_API.Repository
                     configurationCreateDto.treatmentPlanName
                 });
 
-            IEnumerable<Guid> treatments = await sqlConnection.QueryAsync<Guid>(
-                "SELECT TreatmentId FROM Treatment WHERE (TreatmentPlanName = @treatmentPlanName OR TreatmentPlanName = 'Both')",
+
+            await sqlConnection.ExecuteAsync(
+                "INSERT INTO [TreatmentInfo] (Email, [Date], DoctorName, StickerId, TreatmentId) SELECT @email, null, @doctor, null, t.TreatmentId FROM Treatment t WHERE (t.TreatmentPlanName = @treatmentPlanName OR t.TreatmentPlanName = 'Both') AND (t.TreatmentId NOT IN (SELECT TreatmentId FROM TreatmentInfo i WHERE i.Email = @email))",
                 new
                 {
-                    configurationCreateDto.treatmentPlanName
+                    email, doctor = configurationCreateDto.primaryDoctorName, configurationCreateDto.treatmentPlanName
                 });
-
-            foreach (var treatment in treatments)
-            {
-                await sqlConnection.ExecuteAsync(
-                    "INSERT INTO [TreatmentInfo] (Email, [Date], DoctorName, StickerId, TreatmentId) VALUES (@email, null, @doctor, null, @id)",
-                    new
-                    {
-                        email, doctor = configurationCreateDto.primaryDoctorName, id = treatment
-                    });
-            }
         }
 
         public async Task<bool> ConflictCheck(string email)
@@ -68,10 +59,18 @@ namespace Bosmaatje_API.Repository
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
             await sqlConnection.ExecuteAsync(
-                "UPDATE [Configuration] SET PrimaryDoctorName = @primaryDoctorName, CharacterId = @characterId,  WHERE Email = @email",
+                "UPDATE [Configuration] SET PrimaryDoctorName = @primaryDoctorName, CharacterId = @characterId, TreatmentPlanName = @treatmentPlanName WHERE Email = @email",
                 new
                 {
-                    email, configurationUpdateDto.primaryDoctorName, configurationUpdateDto.characterId
+                    email, configurationUpdateDto.primaryDoctorName, configurationUpdateDto.characterId,
+                    configurationUpdateDto.treatmentPlanName
+                });
+
+            await sqlConnection.ExecuteAsync(
+                "INSERT INTO [TreatmentInfo] (Email, [Date], DoctorName, StickerId, TreatmentId) SELECT @email, null, @doctor, null, t.TreatmentId FROM Treatment t WHERE (t.TreatmentPlanName = @treatmentPlanName OR t.TreatmentPlanName = 'Both') AND (t.TreatmentId NOT IN (SELECT TreatmentId FROM TreatmentInfo i WHERE i.Email = @email))",
+                new
+                {
+                    email, doctor = configurationUpdateDto.primaryDoctorName, configurationUpdateDto.treatmentPlanName
                 });
         }
 

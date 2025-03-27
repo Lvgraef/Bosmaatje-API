@@ -9,7 +9,6 @@ namespace Bosmaatje_API.Repository
         public async Task<List<TreatmentReadDto?>> Read(string email, string? treatmentPlanName)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            //todo
             var result = await sqlConnection.QueryAsync<TreatmentReadDto>(
                 "SELECT i.Email, t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM [Treatment] t LEFT JOIN TreatmentInfo i ON i.TreatmentId = t.TreatmentId WHERE (i.Email = @email AND (t.TreatmentPlanName = 'Both' OR t.TreatmentPlanName = @treatmentPlanName)) ORDER BY t.[Order]",
                 new
