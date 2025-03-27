@@ -19,7 +19,7 @@ namespace Bosmaatje_API.Repository
                 });
 
             IEnumerable<Guid> treatments = await sqlConnection.QueryAsync<Guid>(
-                "SELECT TreatmentId FROM Treatment WHERE TreatmentPlanName = @treatmentPlanName",
+                "SELECT TreatmentId FROM Treatment WHERE (TreatmentPlanName = @treatmentPlanName OR TreatmentPlanName = 'Both')",
                 new
                 {
                     configurationCreateDto.treatmentPlanName
