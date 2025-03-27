@@ -10,7 +10,7 @@ namespace Bosmaatje_API.Repository
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
             var result = await sqlConnection.QueryAsync<TreatmentReadDto>(
-                "SELECT t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, t.[Date], t.[Order], t.DoctorName, t.TreatmentPlanName, t.IsCompleted, t.StickerId FROM [Configuration] c LEFT JOIN Treatment t ON c.TreatmentPlanName = t.TreatmentPlanName WHERE c.TreatmentPlanName = @treatmentPlanName AND c.Email = @email ORDER BY t.[Order]",
+                "SELECT t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM [Configuration] c LEFT JOIN Treatment t ON c.TreatmentPlanName = t.TreatmentPlanName LEFT JOIN TreatmentInfo i ON t.TreatmentId = i.TreatmentId WHERE c.TreatmentPlanName = @treatmentPlanName AND c.Email = @email AND i.Email = @Email ORDER BY t.[Order]",
                 new
                 {
                     email, treatmentPlanName
@@ -39,7 +39,7 @@ namespace Bosmaatje_API.Repository
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
             var result = await sqlConnection.QuerySingleOrDefaultAsync<TreatmentReadDto>(
-                "SELECT * FROM [Treatment] t LEFT JOIN [Configuration] c ON t.TreatmentPlanName = c.TreatmentPlanName WHERE t.TreatmentId = @treatmentId AND c.Email = @email",
+                "SELECT t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM Treatment t LEFT JOIN Configuration c ON c.TreatmentPlanName = t.TreatmentPlanName  LEFT JOIN TreatmentInfo i ON t.TreatmentId = i.TreatmentId WHERE t.TreatmentId = @treatmentId AND i.Email = @email AND c.Email = @email",
                 new
                 {
                     treatmentId, email
@@ -48,13 +48,14 @@ namespace Bosmaatje_API.Repository
             if (result == null) return;
 
             await sqlConnection.ExecuteAsync(
-                "UPDATE [Treatment] SET [Date] = @date, DoctorName = @doctorName, StickerId = @stickerId WHERE TreatmentId = @treatmentId",
+                "UPDATE [TreatmentInfo] SET [Date] = @date, DoctorName = @doctorName, StickerId = @stickerId WHERE TreatmentId = @treatmentId AND Email = @email",
                 new
                 {
                     treatmentId,
                     date = treatmentUpdateDto.date ?? result!.date,
                     doctorName = treatmentUpdateDto.doctorName ?? result!.doctorName,
-                    stickerId = treatmentUpdateDto.stickerId ?? result!.stickerId
+                    stickerId = treatmentUpdateDto.stickerId ?? result!.stickerId,
+                    email
                 });
         }
     }

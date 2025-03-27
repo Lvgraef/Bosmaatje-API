@@ -59,12 +59,12 @@ namespace Bosmaatje_API.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete()
+        public async Task<ActionResult> Delete([FromQuery] DateTime date)
         {
             try
             {
                 var email = User?.Identity?.Name!;
-                await diaryRepository.Delete(email);
+                await diaryRepository.Delete(email, date);
                 return NoContent();
             }
 

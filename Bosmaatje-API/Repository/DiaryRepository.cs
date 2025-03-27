@@ -42,6 +42,7 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
     public async Task Update(DiaryUpdateDto diaryUpdateDto, string email, DateTime date)
     {
         await using var sqlConnection = new SqlConnection(sqlConnectionString);
+
         await sqlConnection.ExecuteAsync(
             "UPDATE [Diary] SET Content = @content WHERE Email = @email AND Date = @date",
             new
@@ -49,17 +50,18 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
                 email,
                 content = diaryUpdateDto.content,
                 date = date
+
             });
 
     }
 
-    public async Task Delete(string email)
+    public async Task Delete(string email, DateTime date)
     {
         await using var sqlConnection = new SqlConnection(sqlConnectionString);
-        await sqlConnection.ExecuteAsync("DELETE FROM [Diary] WHERE Email = @email", 
+        await sqlConnection.ExecuteAsync("DELETE FROM [Diary] WHERE Email = @email AND [Date] = @date", 
             new
             {
-              email
+              email, date
             });
     }
 }
