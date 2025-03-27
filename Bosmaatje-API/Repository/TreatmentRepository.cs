@@ -9,8 +9,9 @@ namespace Bosmaatje_API.Repository
         public async Task<List<TreatmentReadDto?>> Read(string email, string? treatmentPlanName)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
+            //todo
             var result = await sqlConnection.QueryAsync<TreatmentReadDto>(
-                "SELECT t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM [Configuration] c RIGHT JOIN Treatment t ON c.TreatmentPlanName = t.TreatmentPlanName LEFT JOIN TreatmentInfo i ON t.TreatmentId = i.TreatmentId WHERE (c.TreatmentPlanName = 'Hospitalization' AND c.Email = @email AND i.Email = @Email) OR (t.TreatmentPlanName = 'Both' AND i.Email = @email) ORDER BY t.[Order]",
+                "SELECT i.Email, t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM [Treatment] t LEFT JOIN TreatmentInfo i ON i.TreatmentId = t.TreatmentId WHERE (i.Email = @email AND (t.TreatmentPlanName = 'Both' OR t.TreatmentPlanName = @treatmentPlanName)) ORDER BY t.[Order]",
                 new
                 {
                     email, treatmentPlanName
@@ -39,7 +40,7 @@ namespace Bosmaatje_API.Repository
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
             var result = await sqlConnection.QuerySingleOrDefaultAsync<TreatmentReadDto>(
-                "SELECT t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM Treatment t LEFT JOIN Configuration c ON c.TreatmentPlanName = t.TreatmentPlanName  LEFT JOIN TreatmentInfo i ON t.TreatmentId = i.TreatmentId WHERE t.TreatmentId = @treatmentId AND i.Email = @email AND c.Email = @email",
+                "SELECT t.TreatmentId, t.[Name] AS 'treatmentName', t.ImagePath, t.VideoPath, i.[Date], t.[Order], i.DoctorName, t.TreatmentPlanName, i.StickerId FROM Treatment t LEFT JOIN TreatmentInfo i ON i.TreatmentId = t.TreatmentId WHERE t.TreatmentId = @treatmentId AND i.Email = @email",
                 new
                 {
                     treatmentId, email
