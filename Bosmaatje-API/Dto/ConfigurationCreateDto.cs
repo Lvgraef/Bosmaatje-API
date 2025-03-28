@@ -6,6 +6,6 @@
         public required DateTime childBirthDate { get; set; }
         public required string primaryDoctorName { get; set; }  
         public required string characterId { get; set; } 
-        public required string treatmentPlanName { get; set; } 
+        public required string? treatmentPlanName { get; set; } 
     }
 }
