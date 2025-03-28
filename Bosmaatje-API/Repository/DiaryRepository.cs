@@ -12,7 +12,9 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
         await sqlConnection.ExecuteAsync($"INSERT INTO [Diary] (Date, Content, Email) VALUES (@date, @content, @email)", 
             new
             {
-                email, diaryCreateDto.date, diaryCreateDto.content
+                email, 
+                diaryCreateDto.date, 
+                diaryCreateDto.content
             });
     }
 
@@ -40,11 +42,16 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
     public async Task Update(DiaryUpdateDto diaryUpdateDto, string email, DateTime date)
     {
         await using var sqlConnection = new SqlConnection(sqlConnectionString);
-        await sqlConnection.ExecuteAsync("UPDATE [Diary] SET Content = @content WHERE Email = @email AND Date = @date",
+
+        await sqlConnection.ExecuteAsync(
+            "UPDATE [Diary] SET Content = @content WHERE Email = @email AND Date = @date",
             new
             {
-                email, diaryUpdateDto.content, date
+                email,
+                content = diaryUpdateDto.content,
+                date = date.Date
             });
+
     }
 
     public async Task Delete(string email, DateTime date)
