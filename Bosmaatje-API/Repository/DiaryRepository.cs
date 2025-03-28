@@ -48,7 +48,7 @@ public class DiaryRepository(string sqlConnectionString) : IDiaryRepository
             {
                 email,
                 content = diaryUpdateDto.content,
-                date = date
+                date = date.Date
             });
 
     }
