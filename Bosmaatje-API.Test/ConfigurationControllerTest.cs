@@ -52,7 +52,7 @@ namespace Bosmaatje_API.Test
             mockConfigurationRepository.Setup(repo => repo.Create(It.IsAny<ConfigurationCreateDto>(), It.IsAny<string>())).Returns(Task.CompletedTask);
             var controller = new ConfigurationController(mockConfigurationRepository.Object);
             var result = await controller.Create(EmptyConfigurationCreateDto);
-            Assert.IsType<CreatedAtRouteResult>(result);
+            Assert.IsType<CreatedResult>(result);
         }
 
         [Fact]

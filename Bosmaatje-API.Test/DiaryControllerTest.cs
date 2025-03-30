@@ -33,7 +33,7 @@ public class DiaryControllerTest
           mockDiaryRepository.Setup(repo => repo.Create(It.IsAny<DiaryCreateDto>(), It.IsAny<string>())).Returns(Task.CompletedTask);
           var controller = new DiaryController(mockDiaryRepository.Object);
           var result = await controller.Create(EmptyDiaryCreateDto);
-          Assert.IsType<CreatedAtRouteResult>(result);
+          Assert.IsType<StatusCodeResult>(result);
      }
      public async Task Read_ReadDiary_NotFound()
      {
@@ -56,18 +56,18 @@ public class DiaryControllerTest
      public async Task Update_UpdateDiary_NoContent()
      {
           var mockDiaryRepository = new Mock<IDiaryRepository>();
-          mockDiaryRepository.Setup(repo => repo.Update(It.IsAny<DiaryUpdateDto>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+          mockDiaryRepository.Setup(repo => repo.Update(It.IsAny<DiaryUpdateDto>(), It.IsAny<string>(), It.IsAny<DateTime>())).Returns(Task.CompletedTask);
           var controller = new DiaryController(mockDiaryRepository.Object);
-          var result = await controller.Update(EmptyDiaryUpdateDto);
+          var result = await controller.Update(EmptyDiaryUpdateDto, date);
           Assert.IsType<NoContentResult>(result);
      }
      
      public async Task Delete_DeleteDiary_NoContent()
      {
           var mockDiaryRepository = new Mock<IDiaryRepository>();
-          mockDiaryRepository.Setup(repo => repo.Delete(It.IsAny<string>())).Returns(Task.CompletedTask);
+          mockDiaryRepository.Setup(repo => repo.Delete(It.IsAny<string>(), It.IsAny<DateTime>())).Returns(Task.CompletedTask);
           var controller = new DiaryController(mockDiaryRepository.Object);
-          var result = await controller.Delete();
+          var result = await controller.Delete(date);
           Assert.IsType<NoContentResult>(result);
      }
 }
