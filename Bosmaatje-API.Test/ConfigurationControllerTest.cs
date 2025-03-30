@@ -1,6 +1,5 @@
-
 using Bosmaatje_API.Dto;
-using Bosmaatje_API.IRepository;
+using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ConfigurationController = Bosmaatje_API.Controllers.ConfigurationController;
@@ -31,7 +30,8 @@ namespace Bosmaatje_API.Test
         private static readonly ConfigurationUpdateDto EmptyConfigurationUpdateDto = new()
         {
             primaryDoctorName = "",
-            characterId = ""
+            characterId = "",
+            treatmentPlanName = null
         };
         
         [Fact]

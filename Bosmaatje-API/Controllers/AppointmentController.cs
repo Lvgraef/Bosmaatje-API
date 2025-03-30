@@ -12,9 +12,10 @@ namespace Bosmaatje_API.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(AppointmentCreateDto appointmentCreateDto)
         {
+            var email = User?.Identity?.Name!;
             try
             {
-                await appointmentRepository.Create(appointmentCreateDto);
+                await appointmentRepository.Create(appointmentCreateDto, email);
             }
             catch (SqlException)
             {
@@ -24,7 +25,7 @@ namespace Bosmaatje_API.Controllers
                     return Problem();
             }
 
-            return CreatedAtRoute("Read", null, appointmentCreateDto);
+            return Created();
         }
 
         [HttpGet]

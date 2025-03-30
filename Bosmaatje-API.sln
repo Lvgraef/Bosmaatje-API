@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bosmaatje-API", "Bosmaatje-API\Bosmaatje-API.csproj", "{D28AB6C1-6C94-4510-A63E-3F21A28C512B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bosmaatje-API.Test", "Bosmaatje-API.Test\Bosmaatje-API.Test.csproj", "{DBC17D8C-0D2D-4B88-A145-76336847C9DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{D28AB6C1-6C94-4510-A63E-3F21A28C512B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D28AB6C1-6C94-4510-A63E-3F21A28C512B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D28AB6C1-6C94-4510-A63E-3F21A28C512B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBC17D8C-0D2D-4B88-A145-76336847C9DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBC17D8C-0D2D-4B88-A145-76336847C9DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBC17D8C-0D2D-4B88-A145-76336847C9DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBC17D8C-0D2D-4B88-A145-76336847C9DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

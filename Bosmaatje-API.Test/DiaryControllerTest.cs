@@ -14,12 +14,11 @@ public class DiaryControllerTest
      {
           date = DateTime.MinValue,
           content = "",
-          email = ""
      };
      
      private static readonly DiaryReadDto EmptyDiaryReadDto = new()
      {
-          date = "",
+          date = DateTime.Now,
           content = ""
      };
      

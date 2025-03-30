@@ -6,13 +6,13 @@ namespace Bosmaatje_API.Repository
 {
     public class AppointmentRepository(string sqlConnectionString) : IAppointmentRepository
     {
-        public async Task Create(AppointmentCreateDto appointmentCreateDto)
+        public async Task Create(AppointmentCreateDto appointmentCreateDto, string email)
         {
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            await sqlConnection.ExecuteAsync("INSERT INTO [Appointment] (Name, Email, Date) VALUES (@name, @email, @date)",
+            await sqlConnection.ExecuteAsync("INSERT INTO [Appointment] ([Name], Email, [Date]) VALUES (@name, @email, @date)",
                 new
                 {
-                    appointmentCreateDto.name, appointmentCreateDto.email, appointmentCreateDto.date
+                    appointmentCreateDto.name, email, appointmentCreateDto.date
                 });
         }
 
@@ -20,7 +20,7 @@ namespace Bosmaatje_API.Repository
         {
             List<AppointmentReadDto> appointments = new List<AppointmentReadDto>();
             await using var sqlConnection = new SqlConnection(sqlConnectionString);
-            var result = await sqlConnection.QueryAsync<AppointmentReadDto>("SELECT * FROM [Appointment] WHERE Email = @email)", 
+            var result = await sqlConnection.QueryAsync<AppointmentReadDto>("SELECT * FROM [Appointment] WHERE Email = @email", 
                 new
                 {
                     email
