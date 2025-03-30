@@ -33,6 +33,7 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddSingleton<ITreatmentRepository, TreatmentRepository>(_ => new TreatmentRepository(connectionString!));
 builder.Services.AddSingleton<IConfigurationRepository, ConfigurationRepository>(_ => new ConfigurationRepository(connectionString!));
 builder.Services.AddSingleton<IDiaryRepository, DiaryRepository>(_ => new DiaryRepository(connectionString!));
+builder.Services.AddSingleton<IAppointmentRepository, AppointmentRepository>(_ => new AppointmentRepository(connectionString!));
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     {
