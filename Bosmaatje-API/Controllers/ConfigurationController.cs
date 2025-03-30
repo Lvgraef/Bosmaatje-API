@@ -22,7 +22,7 @@ namespace Bosmaatje_API.Controllers
                 }
                 await configurationRepository.Create(configurationCreateDto, email);
             }
-            catch (SqlException exception)
+            catch (SqlException)
             {
             #if DEBUG
                 throw;
