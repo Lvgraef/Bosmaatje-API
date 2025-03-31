@@ -24,7 +24,7 @@ namespace Bosmaatje_API.Controllers
                 #endif
                 return Problem();
             }
-            return StatusCode(201, diaryCreateDto);
+            return Created();
 
         }
 

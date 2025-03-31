@@ -23,7 +23,7 @@ namespace Bosmaatje_API.Test
             mockAppointmentRepository.Setup(repo => repo.Create(It.IsAny<AppointmentCreateDto>(),It.IsAny<string>())).Returns(Task.CompletedTask);
             var controller = new AppointmentController(mockAppointmentRepository.Object);
             var result = await controller.Create(EmptyAppointmentCreateDto);
-            Assert.IsType<CreatedAtRouteResult>(result);
+            Assert.IsType<CreatedResult>(result);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace Bosmaatje_API.Test
             mockAppointmentRepository.Setup(repo => repo.Read(It.IsAny<string>())).ReturnsAsync(appointments);
             var controller = new AppointmentController(mockAppointmentRepository.Object);
             var result = await controller.Read();
-            Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<OkObjectResult>(result.Result);
         }
 
         [Fact]
