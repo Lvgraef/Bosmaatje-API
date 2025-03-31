@@ -1,6 +1,5 @@
-
 using Bosmaatje_API.Dto;
-using Bosmaatje_API.IRepository;
+using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ConfigurationController = Bosmaatje_API.Controllers.ConfigurationController;
@@ -31,7 +30,8 @@ namespace Bosmaatje_API.Test
         private static readonly ConfigurationUpdateDto EmptyConfigurationUpdateDto = new()
         {
             primaryDoctorName = "",
-            characterId = ""
+            characterId = "",
+            treatmentPlanName = null
         };
         
         [Fact]
@@ -52,7 +52,7 @@ namespace Bosmaatje_API.Test
             mockConfigurationRepository.Setup(repo => repo.Create(It.IsAny<ConfigurationCreateDto>(), It.IsAny<string>())).Returns(Task.CompletedTask);
             var controller = new ConfigurationController(mockConfigurationRepository.Object);
             var result = await controller.Create(EmptyConfigurationCreateDto);
-            Assert.IsType<CreatedAtRouteResult>(result);
+            Assert.IsType<CreatedResult>(result);
         }
 
         [Fact]
