@@ -22,11 +22,12 @@ namespace Bosmaatje_API.Controllers
                 }
                 await configurationRepository.Create(configurationCreateDto, email);
             }
-            catch (SqlException)
+            catch (SqlException exception)
             {
-            #if DEBUG
-                throw;
-            #endif
+                return Problem();
+            }
+            catch (Exception exception)
+            {
                 return Problem();
             }
 
@@ -46,7 +47,7 @@ namespace Bosmaatje_API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(ConfigurationUpdateDto configurationUpdateDto)
+        public async Task<ActionResult> Update(ConfigurationUpdateDto    configurationUpdateDto)
         {
             try
             {

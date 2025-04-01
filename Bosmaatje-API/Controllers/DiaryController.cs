@@ -19,10 +19,11 @@ namespace Bosmaatje_API.Controllers
             }
             catch (SqlException)
             {
-                #if DEBUG
-                    throw;
-                #endif
-                return Problem();
+                return Problem("database error occured");
+            }
+            catch (Exception)
+            {
+                return Problem("unknown error occured");
             }
             return Created();
 
@@ -31,13 +32,24 @@ namespace Bosmaatje_API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<DiaryReadDto>>> Read([FromQuery] DateTime? date)
         {
-            var email = User?.Identity?.Name!;
-            var result = await diaryRepository.Read(email, date);
-            if(result == null)
+            try
             {
-                return NotFound();
+                var email = User?.Identity?.Name!;
+                var result = await diaryRepository.Read(email, date);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (SqlException)
+            {
+                return Problem("database error occured");
+            }
+            catch (Exception)
+            {
+                return Problem("unknown error occured");
+            }
         }
 
         [HttpPut]
@@ -51,10 +63,11 @@ namespace Bosmaatje_API.Controllers
             }
             catch (SqlException)
             {
-            #if DEBUG
-                throw;
-            #endif
-                return Problem();
+                return Problem("database error occured");
+            }
+            catch (Exception)
+            {
+                return Problem("unknown error occured");
             }
         }
 
@@ -70,10 +83,11 @@ namespace Bosmaatje_API.Controllers
 
             catch (SqlException)
             {
-                #if DEBUG
-                    throw;
-                #endif 
-                return Problem(); 
+                return Problem("database error occured");
+            }
+            catch (Exception)
+            {
+                return Problem("unknown error occured");
             }
         }
     }
