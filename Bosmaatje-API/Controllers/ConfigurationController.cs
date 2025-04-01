@@ -22,11 +22,11 @@ namespace Bosmaatje_API.Controllers
                 }
                 await configurationRepository.Create(configurationCreateDto, email);
             }
-            catch (SqlException exception)
+            catch (SqlException)
             {
                 return Problem();
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return Problem();
             }
@@ -37,13 +37,24 @@ namespace Bosmaatje_API.Controllers
         [HttpGet]
         public async Task<ActionResult<ConfigurationReadDto>> Read()
         {
-            var email = User?.Identity?.Name!;
-            var result = await configurationRepository.Read(email);
-            if(result == null)
+            try
             {
-                return NotFound();
+                var email = User?.Identity?.Name!;
+                var result = await configurationRepository.Read(email);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (SqlException)
+            {
+                return Problem();
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
         }
 
         [HttpPut]
@@ -57,9 +68,10 @@ namespace Bosmaatje_API.Controllers
             }
             catch (SqlException)
             {
-            #if DEBUG
-                throw;
-            #endif
+                return Problem();
+            }
+            catch (Exception)
+            {
                 return Problem();
             }
         }
@@ -76,10 +88,11 @@ namespace Bosmaatje_API.Controllers
 
             catch (SqlException)
             {
-                #if DEBUG
-                    throw;
-                #endif 
-                return Problem(); 
+                return Problem();
+            }
+            catch (Exception)
+            {
+                return Problem();
             }
         }
     }

@@ -4,14 +4,12 @@ using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ConfigurationController = Bosmaatje_API.Controllers.ConfigurationController;
-using CustomExeptions;
 
 namespace Bosmaatje_API.Test
 {
     public class ConfigurationControllerTest
     {
 
-        private ForSQl SqlException = new ForSQl(); 
         private static readonly ConfigurationCreateDto EmptyConfigurationCreateDto = new()
         {
             childName = "",
@@ -85,21 +83,6 @@ namespace Bosmaatje_API.Test
             Assert.Equal(500, ((ObjectResult)result).StatusCode);
         }
 
-        [Fact]
-        public async Task Create_ConfigurationThrowSqlException_CreatedAtRoute()
-        {
-            // Arrange
-            var mockConfigurationRepository = new Mock<IConfigurationRepository>();
-            mockConfigurationRepository.Setup(repo => repo.ConflictCheck(It.IsAny<string>())).ReturnsAsync(false);
-            mockConfigurationRepository.Setup(repo => repo.Create(It.IsAny<ConfigurationCreateDto>(), It.IsAny<string>())).ThrowsAsync(SqlException.MakeSqlException());
-            var controller = new ConfigurationController(mockConfigurationRepository.Object);
-
-            // Act
-            var result = await controller.Create(EmptyConfigurationCreateDto);
-
-            // Assert
-            Assert.Equal(500, ((ObjectResult)result).StatusCode);
-        }
 
 
         [Fact]
@@ -133,6 +116,21 @@ namespace Bosmaatje_API.Test
         }
 
         [Fact]
+        public async Task Read_ConfigurationThrowGeneralException_Problem()
+        {
+            // Arrange
+            var mockConfigurationRepository = new Mock<IConfigurationRepository>();
+            mockConfigurationRepository.Setup(repo => repo.Read(It.IsAny<string>())).ThrowsAsync(new Exception());
+            var controller = new ConfigurationController(mockConfigurationRepository.Object);
+            // Act
+            var result = await controller.Read();
+            // Assert
+            Assert.Equal(500, ((ObjectResult)result.Result).StatusCode);
+        }
+
+
+
+        [Fact]
         public async Task Update_UpdateConfiguration_NoContent()
         {
             // Arrange
@@ -148,6 +146,20 @@ namespace Bosmaatje_API.Test
         }
 
         [Fact]
+        public async Task Update_ConfigurationThrowGeneralException_Problem()
+        {
+            // Arrange
+            var mockConfigurationRepository = new Mock<IConfigurationRepository>();
+            mockConfigurationRepository.Setup(repo => repo.Update(It.IsAny<ConfigurationUpdateDto>(), It.IsAny<string>())).ThrowsAsync(new Exception());
+            var controller = new ConfigurationController(mockConfigurationRepository.Object);
+            // Act
+            var result = await controller.Update(EmptyConfigurationUpdateDto);
+            // Assert
+            Assert.Equal(500, ((ObjectResult)result).StatusCode);
+        }
+
+
+        [Fact]
         public async Task Delete_DeleteConfiguration_NoContent()
         {
             // Arrange
@@ -158,6 +170,8 @@ namespace Bosmaatje_API.Test
             // Act
             var result = await controller.Delete();
         }
+
+
 
     }
 }

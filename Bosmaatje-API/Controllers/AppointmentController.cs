@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Bosmaatje_API.Dto;
 using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,12 @@ namespace Bosmaatje_API.Controllers
             }
             catch (SqlException)
             {
-                #if DEBUG
-                    throw;
-                #endif 
-                    return Problem();
+                return Problem();
             }
+            catch (Exception)
+            {
+                return Problem();
+            } 
 
             return Created();
         }
@@ -31,13 +33,30 @@ namespace Bosmaatje_API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<AppointmentReadDto>>> Read()
         {
-            var email = User?.Identity?.Name!;
-            var result = await appointmentRepository.Read(email);
-            if (result == null)
+            try
             {
-                return NotFound();
+                var email = User?.Identity?.Name!;
+                var result = await appointmentRepository.Read(email);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (SqlException)
+            {
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPut]
+        public IActionResult Update()
+        {
+            return StatusCode(StatusCodes.Status405MethodNotAllowed);
         }
 
         [HttpDelete]
@@ -49,10 +68,10 @@ namespace Bosmaatje_API.Controllers
             }
             catch (SqlException)
             {
-                #if DEBUG
-                    throw;
-                #endif 
-                    return Problem();
+                return Problem();
+            }
+            catch (Exception) {
+                return Problem();
             }
             return NoContent();
         }

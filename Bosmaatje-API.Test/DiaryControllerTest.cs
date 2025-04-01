@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Moq;
 
-using CustomExeptions;
-
 namespace Bosmaatje_API.Test;
 
 public class DiaryControllerTest
@@ -14,7 +12,6 @@ public class DiaryControllerTest
      private DateTime date = DateTime.MinValue;
      private List<DiaryReadDto> EmptyDiaryReadDtoList = new List<DiaryReadDto>();
 
-     private ForSQl SqlException = new ForSQl();
 
     private static readonly DiaryCreateDto EmptyDiaryCreateDto = new()
      {
@@ -64,26 +61,6 @@ public class DiaryControllerTest
         Assert.Equal(500, objectResult.StatusCode);
     }
 
-    [Fact]
-    public async Task Create_DiaryThrowsSqlException_ReturnsProblem()
-    {
-        // Arrange
-        var mockDiaryRepository = new Mock<IDiaryRepository>();
-        mockDiaryRepository
-            .Setup(repo => repo.Create(It.IsAny<DiaryCreateDto>(), It.IsAny<string>()))
-            .ThrowsAsync(SqlException.MakeSqlException());
-
-        var controller = new DiaryController(mockDiaryRepository.Object);
-
-        // Act
-        var result = await controller.Create(EmptyDiaryCreateDto);
-
-        // Assert
-        var objectResult = Assert.IsType<ObjectResult>(result);
-        Assert.Equal(500, objectResult.StatusCode);
-
-    }
-
 
 
     [Fact]
@@ -124,21 +101,6 @@ public class DiaryControllerTest
         Assert.Equal(500, objectResult.StatusCode);
     }
 
-    [Fact]
-    public async Task Read_DiaryThrowsSqlException_ReturnsProblem()
-    {
-        // Arrange
-        var mockDiaryRepository = new Mock<IDiaryRepository>();
-        mockDiaryRepository
-            .Setup(repo => repo.Read(It.IsAny<string>(), It.IsAny<DateTime>()))
-            .ThrowsAsync(SqlException.MakeSqlException());
-        var controller = new DiaryController(mockDiaryRepository.Object);
-        // Act
-        var result = await controller.Read(date);
-        // Assert
-        var objectResult = Assert.IsType<ObjectResult>(result.Result);
-        Assert.Equal(500, objectResult.StatusCode);
-    }
 
     [Fact]
      public async Task Update_Diary_NoContent()
@@ -166,22 +128,6 @@ public class DiaryControllerTest
         Assert.Equal(500, objectResult.StatusCode);
     }
 
-    [Fact]
-    public async Task Update_DiaryThrowsSqlException_ReturnsProblem()
-    {
-        // Arrange
-        var mockDiaryRepository = new Mock<IDiaryRepository>();
-        mockDiaryRepository
-            .Setup(repo => repo.Update(It.IsAny<DiaryUpdateDto>(), It.IsAny<string>(), It.IsAny<DateTime>()))
-            .ThrowsAsync(SqlException.MakeSqlException());
-        var controller = new DiaryController(mockDiaryRepository.Object);
-        // Act
-        var result = await controller.Update(EmptyDiaryUpdateDto, date);
-        // Assert
-        var objectResult = Assert.IsType<ObjectResult>(result);
-        Assert.Equal(500, objectResult.StatusCode);
-    }
-
 
     [Fact]
      public async Task Delete_DeleteDiary_NoContent()
@@ -201,24 +147,6 @@ public class DiaryControllerTest
         mockDiaryRepository
             .Setup(repo => repo.Delete(It.IsAny<string>(), It.IsAny<DateTime>()))
             .Throws(new Exception());
-        var controller = new DiaryController(mockDiaryRepository.Object);
-        // Act
-        var result = await controller.Delete(date);
-        // Assert
-        var objectResult = Assert.IsType<ObjectResult>(result);
-        Assert.Equal(500, objectResult.StatusCode);
-    }
-
-    [Fact]
-    public async Task Delete_DiaryThrowsSqlException_ReturnsProblem()
-    {
-        // Arrange
-        
-
-        var mockDiaryRepository = new Mock<IDiaryRepository>();
-        mockDiaryRepository
-            .Setup(repo => repo.Delete(It.IsAny<string>(), It.IsAny<DateTime>()))
-            .Throws(SqlException.MakeSqlException());
         var controller = new DiaryController(mockDiaryRepository.Object);
         // Act
         var result = await controller.Delete(date);

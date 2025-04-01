@@ -9,12 +9,32 @@ namespace Bosmaatje_API.Controllers
     [Route("Treatments")]
     public class TreatmentController(ITreatmentRepository treatmentRepository) : ControllerBase
     {
+
+        [HttpPost]
+        public IActionResult Create()
+        {
+            return StatusCode(StatusCodes.Status405MethodNotAllowed);
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<List<TreatmentReadDto>>> Read([FromQuery] string? treatmentPlanName)
         {
-            var email = User?.Identity?.Name!;
-            var result = await treatmentRepository.Read(email, treatmentPlanName);
-            return Ok(result);
+            try
+            {
+                var email = User?.Identity?.Name!;
+                var result = await treatmentRepository.Read(email, treatmentPlanName);
+                return Ok(result);
+            }
+            catch (SqlException)
+            {
+                return BadRequest(treatmentPlanName);
+            }
+            catch (Exception)
+            {
+                return BadRequest(treatmentPlanName);
+            }
+
         }
 
         [HttpPut]
@@ -27,12 +47,19 @@ namespace Bosmaatje_API.Controllers
             }
             catch (SqlException)
             {
-                #if DEBUG
-                    throw;
-                #endif 
+                return Problem();
+            }
+            catch (Exception)
+            {
                 return Problem();
             }
             return NoContent();
+        }
+
+        [HttpDelete]
+        public IActionResult Delete()
+        {
+            return StatusCode(StatusCodes.Status405MethodNotAllowed);
         }
     } 
 }
