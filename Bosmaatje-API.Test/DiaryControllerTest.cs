@@ -97,8 +97,8 @@ public class DiaryControllerTest
         // Act
         var result = await controller.Read(date);
         // Assert
-        var objectResult = Assert.IsType<ObjectResult>(result.Result);
-        Assert.Equal(500, objectResult.StatusCode);
+        var badRequestResult = Assert.IsType<BadRequestResult>(result.Result);
+        Assert.Equal(400, ((BadRequestResult)result.Result).StatusCode);
     }
 
 

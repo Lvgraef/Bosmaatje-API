@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Bosmaatje_API.Dto;
 using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +17,13 @@ namespace Bosmaatje_API.Controllers
             {
                 await appointmentRepository.Create(appointmentCreateDto, email);
             }
-            catch (SqlException)
-            {
-                return Problem();
-            }
             catch (Exception)
             {
-                return Problem();
-            } 
+                #if DEBUG
+                    throw;
+                #endif 
+                    return Problem();
+            }
 
             return Created();
         }
@@ -43,35 +41,29 @@ namespace Bosmaatje_API.Controllers
                 }
                 return Ok(result);
             }
-            catch (SqlException)
-            {
-                return BadRequest();
-            }
             catch (Exception)
             {
+                #if DEBUG
+                throw;
+                #endif
                 return BadRequest();
             }
         }
 
-        [HttpPut]
-        public IActionResult Update()
-        {
-            return StatusCode(StatusCodes.Status405MethodNotAllowed);
-        }
 
-        [HttpDelete]
+            [HttpDelete]
         public async Task<ActionResult> Delete([FromQuery] Guid appointmentId)
         {
             try
             {
                 await appointmentRepository.Delete(appointmentId);
             }
-            catch (SqlException)
+            catch (Exception)
             {
-                return Problem();
-            }
-            catch (Exception) {
-                return Problem();
+                #if DEBUG
+                    throw;
+                #endif 
+                    return Problem();
             }
             return NoContent();
         }

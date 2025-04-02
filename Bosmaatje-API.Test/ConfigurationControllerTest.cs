@@ -125,7 +125,8 @@ namespace Bosmaatje_API.Test
             // Act
             var result = await controller.Read();
             // Assert
-            Assert.Equal(500, ((ObjectResult)result.Result).StatusCode);
+            var badRequestResult = Assert.IsType<BadRequestResult>(result.Result);
+            Assert.Equal(400, ((BadRequestResult)result.Result).StatusCode);
         }
 
 

@@ -20,22 +20,6 @@ namespace Bosmaatje_API.Test
             stickerId = "",
         };
 
-        // test Create, method not allowed:
-        [Fact]
-        public void Create_CreateTreatment_MethodNotAllowed()
-        {
-            // Arrange
-            var mockTreatmentRepository = new Mock<ITreatmentRepository>();
-            var controller = new TreatmentController(mockTreatmentRepository.Object);
-
-            // Act
-            var result = controller.Create();
-
-            // Assert: controleer of de statuscode 405 is
-            Assert.IsType<StatusCodeResult>(result);
-            Assert.Equal(StatusCodes.Status405MethodNotAllowed, ((StatusCodeResult)result).StatusCode);
-        }
-
 
         [Fact]
         public async Task Read_ReadTreatment_Ok()
@@ -57,8 +41,8 @@ namespace Bosmaatje_API.Test
             //Act
             var result = await controller.Read(_treatmentPlanName);
             // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-            Assert.Equal(400, badRequestResult.StatusCode);
+            var badRequestResult = Assert.IsType<BadRequestResult>(result.Result);
+            Assert.Equal(400, ((BadRequestResult)result.Result).StatusCode);
         }
 
 
@@ -83,20 +67,6 @@ namespace Bosmaatje_API.Test
             var result = await controller.Update(treatmentId, EmptyTreatmentUpdateDto);
             // Assert
             Assert.Equal(500, ((ObjectResult)result).StatusCode);
-        }
-
-        [Fact]
-        public void Delete_Treatment_MethodNotAllowed()
-        {
-            var mockTreatmentRepository = new Mock<ITreatmentRepository>();
-            var controller = new TreatmentController(mockTreatmentRepository.Object);
-
-            // Act
-            var result = controller.Delete();
-
-            // Assert: controleer of de statuscode 405 is
-            Assert.IsType<StatusCodeResult>(result);
-            Assert.Equal(StatusCodes.Status405MethodNotAllowed, ((StatusCodeResult)result).StatusCode);
         }
 
     }

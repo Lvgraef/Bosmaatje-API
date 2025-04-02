@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using Bosmaatje_API.Dto;
 using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,12 @@ namespace Bosmaatje_API.Controllers
                 var email = User?.Identity?.Name!;
                 await diaryRepository.Create(diaryCreateDto, email);
             }
-            catch (SqlException)
-            {
-                return Problem("database error occured");
-            }
             catch (Exception)
             {
-                return Problem("unknown error occured");
+                #if DEBUG
+                    throw;
+                #endif
+                return Problem();
             }
             return Created();
 
@@ -42,14 +42,14 @@ namespace Bosmaatje_API.Controllers
                 }
                 return Ok(result);
             }
-            catch (SqlException)
-            {
-                return Problem("database error occured");
-            }
             catch (Exception)
             {
-                return Problem("unknown error occured");
+                #if DEBUG
+                    throw;
+                #endif
+                    return BadRequest();
             }
+
         }
 
         [HttpPut]
@@ -61,13 +61,12 @@ namespace Bosmaatje_API.Controllers
                 await diaryRepository.Update(diaryUpdateDto, email, date);
                 return NoContent();
             }
-            catch (SqlException)
-            {
-                return Problem("database error occured");
-            }
             catch (Exception)
             {
-                return Problem("unknown error occured");
+            #if DEBUG
+                throw;
+            #endif
+                return Problem();
             }
         }
 
@@ -81,13 +80,12 @@ namespace Bosmaatje_API.Controllers
                 return NoContent();
             }
 
-            catch (SqlException)
-            {
-                return Problem("database error occured");
-            }
             catch (Exception)
             {
-                return Problem("unknown error occured");
+                #if DEBUG
+                    throw;
+                #endif 
+                return Problem(); 
             }
         }
     }

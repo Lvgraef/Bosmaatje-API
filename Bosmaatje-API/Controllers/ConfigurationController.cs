@@ -22,12 +22,11 @@ namespace Bosmaatje_API.Controllers
                 }
                 await configurationRepository.Create(configurationCreateDto, email);
             }
-            catch (SqlException)
-            {
-                return Problem();
-            }
             catch (Exception)
             {
+            #if DEBUG
+                throw;
+            #endif
                 return Problem();
             }
 
@@ -47,18 +46,17 @@ namespace Bosmaatje_API.Controllers
                 }
                 return Ok(result);
             }
-            catch (SqlException)
-            {
-                return Problem();
-            }
             catch (Exception)
             {
-                return Problem();
+#if DEBUG
+                throw;
+#endif 
+                return BadRequest();
             }
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(ConfigurationUpdateDto    configurationUpdateDto)
+        public async Task<ActionResult> Update(ConfigurationUpdateDto configurationUpdateDto)
         {
             try
             {
@@ -66,12 +64,11 @@ namespace Bosmaatje_API.Controllers
                 await configurationRepository.Update(configurationUpdateDto, email);
                 return NoContent();
             }
-            catch (SqlException)
-            {
-                return Problem();
-            }
             catch (Exception)
             {
+            #if DEBUG
+                throw;
+            #endif
                 return Problem();
             }
         }
@@ -86,13 +83,12 @@ namespace Bosmaatje_API.Controllers
                 return NoContent();
             }
 
-            catch (SqlException)
-            {
-                return Problem();
-            }
             catch (Exception)
             {
-                return Problem();
+                #if DEBUG
+                    throw;
+                #endif 
+                return Problem(); 
             }
         }
     }

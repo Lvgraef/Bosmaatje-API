@@ -76,22 +76,7 @@ namespace Bosmaatje_API.Test
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestResult>(result.Result);
-            Assert.Equal(400, badRequestResult.StatusCode);
-        }
-
-        [Fact]
-        public void Update_UpdateAppointment_MethodNotAllowed()
-        {
-            // Arrange
-            var mockAppointmentRepository = new Mock<IAppointmentRepository>();
-            var controller = new AppointmentController(mockAppointmentRepository.Object);
-
-            // Act
-            var result =  controller.Update();
-
-            // Assert
-            Assert.IsType<StatusCodeResult>(result);
-            Assert.Equal(StatusCodes.Status405MethodNotAllowed, ((StatusCodeResult)result).StatusCode);
+            Assert.Equal(400, badRequestResult.StatusCode); 
         }
 
 
