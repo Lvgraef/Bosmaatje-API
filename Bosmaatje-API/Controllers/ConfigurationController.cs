@@ -24,9 +24,6 @@ namespace Bosmaatje_API.Controllers
             }
             catch (Exception)
             {
-            #if DEBUG
-                throw;
-            #endif
                 return Problem();
             }
 
@@ -48,9 +45,6 @@ namespace Bosmaatje_API.Controllers
             }
             catch (Exception)
             {
-#if DEBUG
-                throw;
-#endif 
                 return BadRequest();
             }
         }
@@ -66,9 +60,6 @@ namespace Bosmaatje_API.Controllers
             }
             catch (Exception)
             {
-            #if DEBUG
-                throw;
-            #endif
                 return Problem();
             }
         }
@@ -85,9 +76,6 @@ namespace Bosmaatje_API.Controllers
 
             catch (Exception)
             {
-                #if DEBUG
-                    throw;
-                #endif 
                 return Problem(); 
             }
         }
