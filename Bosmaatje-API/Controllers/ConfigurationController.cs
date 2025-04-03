@@ -22,7 +22,7 @@ namespace Bosmaatje_API.Controllers
                 }
                 await configurationRepository.Create(configurationCreateDto, email);
             }
-            catch (SqlException)
+            catch (Exception)
             {
             #if DEBUG
                 throw;
@@ -36,13 +36,23 @@ namespace Bosmaatje_API.Controllers
         [HttpGet]
         public async Task<ActionResult<ConfigurationReadDto>> Read()
         {
-            var email = User?.Identity?.Name!;
-            var result = await configurationRepository.Read(email);
-            if(result == null)
+            try
             {
-                return NotFound();
+                var email = User?.Identity?.Name!;
+                var result = await configurationRepository.Read(email);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception)
+            {
+#if DEBUG
+                throw;
+#endif 
+                return BadRequest();
+            }
         }
 
         [HttpPut]
@@ -54,7 +64,7 @@ namespace Bosmaatje_API.Controllers
                 await configurationRepository.Update(configurationUpdateDto, email);
                 return NoContent();
             }
-            catch (SqlException)
+            catch (Exception)
             {
             #if DEBUG
                 throw;
@@ -73,7 +83,7 @@ namespace Bosmaatje_API.Controllers
                 return NoContent();
             }
 
-            catch (SqlException)
+            catch (Exception)
             {
                 #if DEBUG
                     throw;

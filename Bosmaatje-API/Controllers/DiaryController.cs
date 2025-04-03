@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using Bosmaatje_API.Dto;
 using Bosmaatje_API.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace Bosmaatje_API.Controllers
                 var email = User?.Identity?.Name!;
                 await diaryRepository.Create(diaryCreateDto, email);
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 #if DEBUG
                     throw;
@@ -31,13 +32,24 @@ namespace Bosmaatje_API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<DiaryReadDto>>> Read([FromQuery] DateTime? date)
         {
-            var email = User?.Identity?.Name!;
-            var result = await diaryRepository.Read(email, date);
-            if(result == null)
+            try
             {
-                return NotFound();
+                var email = User?.Identity?.Name!;
+                var result = await diaryRepository.Read(email, date);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception)
+            {
+                #if DEBUG
+                    throw;
+                #endif
+                    return BadRequest();
+            }
+
         }
 
         [HttpPut]
@@ -49,7 +61,7 @@ namespace Bosmaatje_API.Controllers
                 await diaryRepository.Update(diaryUpdateDto, email, date);
                 return NoContent();
             }
-            catch (SqlException)
+            catch (Exception)
             {
             #if DEBUG
                 throw;
@@ -68,7 +80,7 @@ namespace Bosmaatje_API.Controllers
                 return NoContent();
             }
 
-            catch (SqlException)
+            catch (Exception)
             {
                 #if DEBUG
                     throw;

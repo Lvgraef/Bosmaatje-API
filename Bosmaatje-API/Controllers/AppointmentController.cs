@@ -17,7 +17,7 @@ namespace Bosmaatje_API.Controllers
             {
                 await appointmentRepository.Create(appointmentCreateDto, email);
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 #if DEBUG
                     throw;
@@ -31,23 +31,34 @@ namespace Bosmaatje_API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<AppointmentReadDto>>> Read()
         {
-            var email = User?.Identity?.Name!;
-            var result = await appointmentRepository.Read(email);
-            if (result == null)
+            try
             {
-                return NotFound();
+                var email = User?.Identity?.Name!;
+                var result = await appointmentRepository.Read(email);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception)
+            {
+                #if DEBUG
+                throw;
+                #endif
+                return BadRequest();
+            }
         }
 
-        [HttpDelete]
+
+            [HttpDelete]
         public async Task<ActionResult> Delete([FromQuery] Guid appointmentId)
         {
             try
             {
                 await appointmentRepository.Delete(appointmentId);
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 #if DEBUG
                     throw;

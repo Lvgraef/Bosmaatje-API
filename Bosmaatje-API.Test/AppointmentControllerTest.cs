@@ -2,6 +2,7 @@ using System.Reflection.Metadata;
 using Bosmaatje_API.Controllers;
 using Bosmaatje_API.Dto;
 using Bosmaatje_API.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -27,13 +28,19 @@ namespace Bosmaatje_API.Test
         }
 
         [Fact]
-        public async Task Read_ReadAppointment_Notfound()
+        public async Task Create_AppointmentThrowGeneralException()
         {
+            // Arrange
             var mockAppointmentRepository = new Mock<IAppointmentRepository>();
-            mockAppointmentRepository.Setup(repo => repo.Read(It.IsAny<string>()))!.ReturnsAsync((List<AppointmentReadDto>)null);
+            mockAppointmentRepository.Setup(repo => repo.Create(It.IsAny<AppointmentCreateDto>(), It.IsAny<string>())).ThrowsAsync(new Exception());
             var controller = new AppointmentController(mockAppointmentRepository.Object);
-            var result = await controller.Read();
-            Assert.IsType<NotFoundResult>(result.Result);
+
+            // Act
+            var result = await controller.Create(EmptyAppointmentCreateDto);
+
+            // Assert: check if the result is a Problem (which is an ObjectResult with a 500 status code)
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, objectResult.StatusCode);
         }
 
         [Fact]
@@ -47,6 +54,33 @@ namespace Bosmaatje_API.Test
         }
 
         [Fact]
+        public async Task Read_ReadAppointment_Notfound()
+        {
+            var mockAppointmentRepository = new Mock<IAppointmentRepository>();
+            mockAppointmentRepository.Setup(repo => repo.Read(It.IsAny<string>()))!.ReturnsAsync((List<AppointmentReadDto>)null);
+            var controller = new AppointmentController(mockAppointmentRepository.Object);
+            var result = await controller.Read();
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task Read_AppointmetThrowGeneralException_BadRequest()
+        {
+            // Arrange
+            var mockAppointmentRepository = new Mock<IAppointmentRepository>();
+            mockAppointmentRepository.Setup(repo => repo.Read(It.IsAny<string>())).ThrowsAsync(new Exception());
+            var controller = new AppointmentController(mockAppointmentRepository.Object);
+
+            // Act
+            var result = await controller.Read();
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestResult>(result.Result);
+            Assert.Equal(400, badRequestResult.StatusCode); 
+        }
+
+
+        [Fact]
         public async Task Delete_DeleteAppointment_NoContent()
         {
             var mockAppointRepository = new Mock<IAppointmentRepository>();
@@ -54,6 +88,22 @@ namespace Bosmaatje_API.Test
             var controller = new AppointmentController(mockAppointRepository.Object);
             var result = await controller.Delete(Guid.Empty);
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task Delete_AppoinmentThrowGeneralException_Problem()
+        {
+            // Arrange
+            var mockAppointmentRepository = new Mock<IAppointmentRepository>();
+            mockAppointmentRepository.Setup(repo => repo.Delete(It.IsAny<Guid>())).ThrowsAsync(new Exception());
+            var controller = new AppointmentController(mockAppointmentRepository.Object);
+
+            // Act
+            var result = await controller.Delete(Guid.Empty);
+
+            // Assert
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, objectResult.StatusCode);
         }
     }
 }

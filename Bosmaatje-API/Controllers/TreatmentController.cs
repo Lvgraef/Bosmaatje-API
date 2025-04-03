@@ -12,9 +12,19 @@ namespace Bosmaatje_API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<TreatmentReadDto>>> Read([FromQuery] string? treatmentPlanName)
         {
-            var email = User?.Identity?.Name!;
-            var result = await treatmentRepository.Read(email, treatmentPlanName);
-            return Ok(result);
+            try
+            {
+                var email = User?.Identity?.Name!;
+                var result = await treatmentRepository.Read(email, treatmentPlanName);
+                return Ok(result);
+            }
+            catch (Exception) 
+            {
+                #if DEBUG
+                    throw;
+                #endif
+                    return BadRequest();
+            }
         }
 
         [HttpPut]
@@ -25,7 +35,7 @@ namespace Bosmaatje_API.Controllers
                 var email = User?.Identity?.Name!;
                 await treatmentRepository.Update(treatmentUpdateDto, treatmentId, email);
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 #if DEBUG
                     throw;
