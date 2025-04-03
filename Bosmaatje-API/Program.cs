@@ -26,15 +26,6 @@ var requireUserPolicy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
     .Build();
 
-builder.Services.AddAuthorizationBuilder()
-    .SetDefaultPolicy(requireUserPolicy)
-    .SetFallbackPolicy(requireUserPolicy);
-
-builder.Services.AddSingleton<ITreatmentRepository, TreatmentRepository>(_ => new TreatmentRepository(connectionString!));
-builder.Services.AddSingleton<IConfigurationRepository, ConfigurationRepository>(_ => new ConfigurationRepository(connectionString!));
-builder.Services.AddSingleton<IDiaryRepository, DiaryRepository>(_ => new DiaryRepository(connectionString!));
-builder.Services.AddSingleton<IAppointmentRepository, AppointmentRepository>(_ => new AppointmentRepository(connectionString!));
-
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     {
         options.User.RequireUniqueEmail = true;
@@ -49,6 +40,15 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     {
         options.ConnectionString = builder.Configuration.GetConnectionString("DapperIdentity");
     });
+
+builder.Services.AddAuthorizationBuilder()
+    .SetDefaultPolicy(requireUserPolicy)
+    .SetFallbackPolicy(requireUserPolicy);
+
+builder.Services.AddSingleton<ITreatmentRepository, TreatmentRepository>(_ => new TreatmentRepository(connectionString!));
+builder.Services.AddSingleton<IConfigurationRepository, ConfigurationRepository>(_ => new ConfigurationRepository(connectionString!));
+builder.Services.AddSingleton<IDiaryRepository, DiaryRepository>(_ => new DiaryRepository(connectionString!));
+builder.Services.AddSingleton<IAppointmentRepository, AppointmentRepository>(_ => new AppointmentRepository(connectionString!));
 
 builder.Services.AddMvc().AddJsonOptions(options => { options.JsonSerializerOptions.MaxDepth = 64; });
 
@@ -70,7 +70,8 @@ app.UseAuthorization();
 app.MapControllers(); //.RequireAuthorization();
 
 app.MapGet("/",
-    () => $"The API is up and running. Connection string found: {(sqlConnectionStringFound ? "Yes" : "No")}");
+    () => $"The API is up and running. Connection string found: {(sqlConnectionStringFound ? "Yes" : "No")}").AllowAnonymous();
+
 app.MapPost("/account/logout",
     async (SignInManager<IdentityUser> signInManager, [FromBody] object? empty) =>
     {
